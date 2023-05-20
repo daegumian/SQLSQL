@@ -127,6 +127,7 @@ DELETE FROM EMPS WHERE EMPLOYEE_ID = 103;
 DEPTS테이블의 다음을 추가하세요
 SELECT * FROM DEPTS;
 
+--답
 INSERT INTO DEPTS(DEPARTMENT_ID, DEPARTMENT_NAME, MANAGER_ID, LOCATION_ID)
 VALUES (320,'영업', 303,1700);
 COMMIT;
@@ -134,18 +135,23 @@ COMMIT;
 문제 2.
 DEPTS테이블의 데이터를 수정합니다
 1. department_name 이 IT Support 인 데이터의 department_name을 IT bank로 변경
+
+--답
 UPDATE DEPTS 
 SET DEPARTMENT_NAME = 'IT Bank'
 WHERE DEPARTMENT_NAME = 'IT';
 
 2. department_id가 290인 데이터의 manager_id를 301로 변경
 
+--답
 UPDATE DEPTS
 SET MANAGER_ID = 301
 WHERE DEPARTMENT_ID = 290;
 
 
 3. department_name이 IT Helpdesk인 데이터의 부서명을 IT Help로 , 매니저아이디를 303으로, 지역아이디를 1800으로 변경하세요
+
+--답
 UPDATE DEPTS
 SET DEPARTMENT_NAME = 'IT Help',
        MANAGER_ID = 303,
@@ -155,6 +161,7 @@ WHERE DEPARTMENT_NAME = 'IT Helpdesk';
 
 4. 재정, 인사, 영업 의 매니저아이디를 301로 한번에 변경하세요.
 
+--답
 UPDATE DEPTS
 SET MANAGER_ID = 301
 WHERE DEPARTMENT_ID IN (300,310,320);
@@ -166,6 +173,7 @@ SELECT * FROM DEPTS;
 1. 부서명 영업부를 삭제 하세요
 2. 부서명 NOC를 삭제하세요
 
+--답
 DELETE FROM DEPTS WHERE DEPARTMENT_ID IN (320, 220);
 
 SELECT * FROM DEPTS;
@@ -174,12 +182,15 @@ SELECT * FROM DEPTS;
 문제
 문제4
 1. Depts 사본테이블에서 department_id 가 200보다 큰 데이터를 삭제하세요.
+
+--답
 DELETE FROM DEPTS WHERE DEPARTMENT_ID > 200;
 
 SELECT * FROM DEPTS;
 
 2. Depts 사본테이블의 manager_id가 null이 아닌 데이터의 manager_id를 전부 100으로 변경하세요.
 
+--답
 UPDATE DEPTS
 SET MANAGER_ID = 100
 WHERE MANAGER_ID IS NOT NULL;
@@ -193,8 +204,11 @@ COMMIT;
 4. Departments테이블은 매번 수정이 일어나는 테이블이라고 가정하고 Depts와 비교하여
 일치하는 경우 Depts의 부서명, 매니저ID, 지역ID를 업데이트 하고
 새로유입된 데이터는 그대로 추가해주는 merge문을 작성하세요.
+
+(GPT에 찾아본 결과 타겟 테이블은 MERGE INTO 뒤에 씀)
 SELECT * FROM DEPARTMENTS;
 
+--답
 MERGE INTO DEPTS S
 USING DEPARTMENTS D
 ON (S.DEPARTMENT_ID = D.DEPARTMENT_ID)
@@ -210,6 +224,24 @@ WHEN NOT MATCHED THEN
                             D.MANAGER_ID,
                             D.LOCATION_ID);
 
+SELECT * FROM DEPTS;
+
+--반대로도 해봄
+MERGE INTO Departments AS D
+USING Depts AS S
+ON (D.department_id = S.department_id)
+WHEN MATCHED THEN
+  UPDATE SET
+    D.department_name = S.department_name,
+    D.manager_id = S.manager_id,
+    D.location_id = S.location_id
+WHEN NOT MATCHED THEN
+  INSERT (department_id, department_name, manager_id, location_id)
+  VALUES (S.department_id, S.department_name, S.manager_id, S.location_id);
+
+
+
+
 
 문제 5
 SELECT * FROM JOBS_IT;
@@ -221,12 +253,11 @@ SELECT * FROM JOBS_IT;
 
 2. jobs_it 테이블에 다음 데이터를 추가하세요
 
-
+--답
 INSERT INTO JOBS_IT (JOB_ID, JOB_TITLE, MIN_SALARY, MAX_SALARY)
 VALUES('SEC_DEV','보안개발팀', 6000, 19000);
-
-             ('NET_DEV','네트워크개발팀', 5000, 20000),
-             ('SEC_DEV','보안개발팀', 6000, 19000);
+VALUES('NET_DEV','네트워크개발팀', 5000, 20000);
+VALUES('SEC_DEV','보안개발팀', 6000, 19000);
 
 3. jobs_it은 타겟 테이블 입니다
 SELECT * FROM JOBS_IT;
@@ -234,8 +265,24 @@ SELECT * FROM JOBS_IT;
 4. jobs테이블은 매번 수정이 일어나는 테이블이라고 가정하고 jobs_it과 비교하여
 min_salary컬럼이 0보다 큰 경우 기존의 데이터는 min_salary, max_salary를 업데이트 하고 새로 유입된
 데이터는 그대로 추가해주는 merge문을 작성하세요
+SELECT * FROM JOBS_IT;
+SELECT * FROM JOBS;
 
+SELECT MIN(MIN_SALARY), MAX(MAX_SALARY)  FROM JOBS;
 
+--답
+MERGE INTO JOBS_IT J1
+USING JOBS J2
+ON (J1.JOB_ID = J2.JOB_ID)
+WHEN MATCHED THEN
+            UPDATE SET
+                            J1.MIN_SALARY = J2.MIN_SALARY,
+                            J1.MAX_SALARY = J2.MAX_SALARY
+WHEN NOT MATCHED THEN
+            INSERT VALUES
+                            (J2.JOB_ID, J2.JOB_TITLE, J2.MIN_SALARY, J2.MAX_SALARY);
+                            
+SELECT * FROM JOBS_IT;
 
 
 

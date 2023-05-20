@@ -4,10 +4,74 @@
 --인원수 기준 내림차순 정렬하세요.
 --사람이 없는 부서는 출력하지 뽑지 않습니다
 
+--인원수
+SELECT DEPARTMENT_ID, COUNT(*) 
+FROM EMPLOYEES
+GROUP BY DEPARTMENT_ID
+ORDER BY COUNT(*) DESC;
+
+SELECT D.DEPARTMENT_ID, D.DEPARTMENT_NAME, D.MANAGER_ID, A.사원수
+FROM DEPARTMENTS D
+RIGHT JOIN (SELECT DEPARTMENT_ID, COUNT(*) AS 사원수
+                                                     FROM EMPLOYEES
+                                                    GROUP BY DEPARTMENT_ID
+                                                    ) A
+ON(D.DEPARTMENT_ID = A.DEPARTMENT_ID)
+ORDER BY A.사원수 DESC;
+                                        
+
 문제 15
 --부서에 대한 정보 전부와, 주소, 우편번호, 부서별 평균 연봉을 구해서 출력하세요
---부서별 평균이 없으면 0으로 출력하세요
+--부서별 평균이 없으면 0으로 출력하세요 -> NVL
+
+SELECT * FROM DEPARTMENTS;
+SELECT DEPARTMENT_NAME FROM DEPARTMENTS;
+
+--부서별 평균 연봉
+SELECT DEPARTMENT_ID, TRUNC(AVG(SALARY))
+FROM EMPLOYEES
+GROUP BY DEPARTMENT_ID;
+
+SELECT * FROM LOCATIONS;
+--합치기
+SELECT L.STREET_ADDRESS, L.POSTAL_CODE, NVL(연봉평균, 0)
+FROM DEPARTMENTS D
+LEFT JOIN (SELECT DEPARTMENT_ID, TRUNC(AVG(SALARY)) AS 연봉평균
+                 FROM EMPLOYEES 
+                 GROUP BY DEPARTMENT_ID) E
+ON (D.DEPARTMENT_ID = E.DEPARTMENT_ID)
+JOIN (SELECT * FROM LOCATIONS) L
+ON (D.LOCATION_ID = L.LOCATION_ID);
+
 
 문제 16
 -문제 15결과에 대해 DEPARTMENT_ID기준으로 내림차순 정렬해서 ROWNUM을 붙여 1-10데이터 까지만
 출력하세요
+
+SELECT
+FROM(SELECT L.STREET_ADDRESS, L.POSTAL_CODE, NVL(연봉평균, 0), ROWNUM AS RN
+FROM DEPARTMENTS D
+LEFT JOIN (SELECT DEPARTMENT_ID, TRUNC(AVG(SALARY)) AS 연봉평균
+                                     FROM EMPLOYEES 
+                                     GROUP BY DEPARTMENT_ID) E
+                    ON (D.DEPARTMENT_ID = E.DEPARTMENT_ID)
+                    JOIN (SELECT * FROM LOCATIONS) L
+                    ON (D.LOCATION_ID = L.LOCATION_ID)
+                    ORDER BY D.DEPARTMENT_ID DESC
+                    )
+WHERE 1 < RN AND 
+
+SELECT L.STREET_ADDRESS, L.POSTAL_CODE, NVL(연봉평균, 0), ROWNUM AS RN
+FROM DEPARTMENTS D
+LEFT JOIN (SELECT DEPARTMENT_ID, TRUNC(AVG(SALARY)) AS 연봉평균
+                 FROM EMPLOYEES 
+                 GROUP BY DEPARTMENT_ID) E
+ON (D.DEPARTMENT_ID = E.DEPARTMENT_ID)
+JOIN (SELECT * FROM LOCATIONS) L
+ON (D.LOCATION_ID = L.LOCATION_ID)
+ORDER BY D.DEPARTMENT_ID DESC
+WHERE RN > 1 AND RN < 10;
+
+
+
+
