@@ -1,0 +1,202 @@
+--DDL문 CREATE, ALTER, DROP
+--오라클 대표 데이터 타입 (VACHAR2(SIZE) - 가변문자, CHAR - 고정문자, NUMBER - 숫자, DATE - 날짜)
+
+CREATE TABLE DEPT2 (
+            DEPT_NO NUMBER(2), --자리수
+            DEPT_NAME VARCHAR2(20), -- 최대 20바이트, 가변문자형
+            DEPT_YN CHAR(1), -- 1BYTE 고정문자형, 예를 들어, Y OR N으로 한글자만 쓰는 컬럼 만들 때 효율적!
+            DEPT_DATE DATE,
+            DEPT_BOBUS NUMBER(10, 3) -- 10자리, 소수부 3자리
+);
+
+DESC DEPT2;
+
+INSERT INTO DEPT2 VALUES(99, 'SALES', 'Y', SYSDATE, 3.14);
+INSERT INTO DEPT2 VALUES(98, 'SALES', '홍', SYSDATE, 3.14); --한글이 2BYTE라 CHAR(1)에 못들어감. 데이터입력 X
+
+SELECT * FROM DEPT2;
+
+COMMIT;
+
+---------------------------------------------------------------------------------------------------
+--열추가
+ALTER TABLE DEPT2 ADD (DEPT_COUNT NUMBER(3) );
+
+--열 이름 변경
+ALTER TABLE DEPT2 RENAME COLUMN DEPT_COUNT TO EMP_COUNT;
+
+--열 수정 (타입변경)
+ALTER TABLE DEPT2 MODIFY (EMP_COUNT NUMBER(10));
+
+--열 삭제
+ALTER TABLE DEPT2 DROP COLUMN EMP_COUNT;
+
+SELECT * FROM DEPT2;
+
+--테이블 삭제
+DROP TABLE DEPT2; --
+--DROP TABLE DEPT2 CASCADE 제약조건명 ; -- 제약조건FK도 삭제, 테이블도 삭제.
+
+---------------------------------------------------------------------------------------------------
+--제약조건
+--열레벨 제약조건(테이블 생성 당시에 열 옆에 적는다)
+SELECT * FROM user_constraints;
+
+--제약조건 이름이 자동 생성된다.
+CREATE TABLE DEPTS2 (
+    DEPT_NO NUMBER(2)             PRIMARY KEY, 
+    DEPT_NAME VARCHAR2(20)    NOT NULL,
+    DEPT_DATE DATE                   DEFAULT SYSDATE, -- 제약조건X, (컬럼의 기본값) 
+    DEPT_PHONE VARCHAR2(20)   UNIQUE,
+    DEPT_BONUS NUMBER(10)      CHECK(DEPT_BONUS > 0),
+    LOCA NUMBER(4)                   REFERENCES LOCATIONS(LOCATION_ID) --FK
+);
+
+--제약조건 이름을 지정 CONSTRAINT ~~ 제약조건
+CREATE TABLE DEPTS2 (
+    DEPT_NO NUMBER(2)             CONSTRAINT DEPT2_PK PRIMARY KEY, 
+    DEPT_NAME VARCHAR2(20)    CONSTRAINT DEPT2_NAME_NN NOT NULL,
+    DEPT_DATE DATE                   DEFAULT SYSDATE, -- 제약조건X, (컬럼의 기본값) 
+    DEPT_PHONE VARCHAR2(20)   CONSTRAINT DEPT2_PHONE_UK UNIQUE,
+    DEPT_BONUS NUMBER(10)      CONSTRAINT DEPT2_BONUS_CK CHECK(DEPT_BONUS > 0),
+    LOCA NUMBER(4)                   CONSTRAINT DEPT2_LOCA_FK  REFERENCES LOCATIONS(LOCATION_ID) --FK
+);
+DROP TABLE DEPTS2;
+
+--테이블 레벨 제약조건 (슈퍼키나, 다중 FK등 선언이 가능)
+
+CREATE TABLE DEPTS2 (
+    DEPT_NO NUMBER(2),            
+    DEPT_NAME VARCHAR2(20)     NOT NULL,
+    DEPT_DATE DATE                   DEFAULT SYSDATE, -- 제약조건X, (컬럼의 기본값) 
+    DEPT_PHONE VARCHAR2(20),   
+    DEPT_BONUS NUMBER(10),     
+    LOCA NUMBER(4),
+    CONSTRAINT DEPT_PK PRIMARY KEY (DEPT_NO /*,DEPT_NAME*/),
+    CONSTRAINT DEPT_PHONE_UK UNIQUE (DEPT_PHONE),
+    CONSTRAINT DEPT_BONUS_CK CHECK (DEPT_BONUS > 0),
+    CONSTRAINT DEPT_LOCA_FK FOREIGN KEY (LOCA) REFERENCES LOCATIONS (LOCATION_ID)
+    );
+   
+
+
+
+SELECT * FROM DEPTS2;
+
+DESC DEPTS2;
+INSERT INTO DEPTS2 VALUES(10, 'HOING', SYSDATE, '010...', 10000, 1000); --PK는 NULL값이 들어갈 수 없음
+INSERT INTO DEPTS2 VALUES(10, 'HOING', SYSDATE, '010...', 10000, 1000); --개체 무결성(NULL과 중복값을 허용하지 않는다.)
+
+--참조무결성(참조테이블의 PK가 아닌 값이 FK에 들어갈 수 없음)
+--500은 LOCATIONS에 PK가 아님
+INSERT INTO DEPTS2 VALUES(20, 'HOING', SYSDATA, '0101111111', 10000, 500);
+--도메인 무결성(값은 ㅋ러럼에 정의된 값이어야 한다)
+INSERT INTO DEPTS2 VALUES(30, 'HONG', SYSDATE, '01010123', -10000, 1000);
+
+
+
+---------------------------------------------------------------------------------------------------
+--제약조건을 추가 OR 삭제
+SELECT * FROM DEPTS2;
+
+CREATE TABLE DEPTS2 (
+    DEPT_NO NUMBER(2),            
+    DEPT_NAME VARCHAR2(20),
+    DEPT_DATE DATE                   DEFAULT SYSDATE, -- 제약조건X, (컬럼의 기본값) 
+    DEPT_PHONE VARCHAR2(20),   
+    DEPT_BONUS NUMBER(10),     
+    LOCA NUMBER(4)
+--    CONSTRAINT DEPT_PK PRIMARY KEY (DEPT_NO /*,DEPT_NAME*/),
+--    CONSTRAINT DEPT_PHONE_UK UNIQUE (DEPT_PHONE),
+--    CONSTRAINT DEPT_BONUS_CK CHECK (DEPT_BONUS > 0),
+--    CONSTRAINT DEPT_LOCA_FK FOREIGN KEY (LOCA) REFERENCES LOCATIONS (LOCATION_ID)
+    );
+
+--제약조건은 수정이 없다.
+ALTER TABLE DEPTS2 ADD CONSTRAINT DEPT_PK PRIMARY KEY (DEPT_NO);
+ALTER TABLE DEPTS2 ADD CONSTRAINT DEPT_PHONE_UK UNIQUE (DEPT_PHONE);
+ALTER TABLE DEPTS2 ADD CONSTRAINT DEPT_BONUS_CK CHECK (DEPT_BONUS > 0 );
+ALTER TABLE DEPTS2 ADD CONSTRAINT DEPT_LOCA_FK FOREIGN KEY (LOCA) REFERENCES LOCATIONS (LOCATION_ID);
+--NOT NULL은 MODIFIY 문장으로 수정한다
+ALTER TABLE DEPTS2 MODIFY DEPT_NAME VARCHAR2(20) NOT NULL;
+--제약조건 삭제
+ALTER TABLE DEPTS2 DROP CONSTRAINT SYS_C007032;
+
+--마우스로 가능한 위의 과정!
+CREATE TABLE DEPT2 
+(
+  DEPT_NO NUMBER(2) NOT NULL 
+, DEPT_NAME VARCHAR2(20) NOT NULL 
+, DEPT_DATE DATE DEFAULT SYSDATA 
+, DEPT_PHONE VARCHAR2(20) 
+, DEPT_BONUS NUMBER(10) 
+, LOCA NUMBER(4) 
+, CONSTRAINT DEPT2_PK PRIMARY KEY ( DEPT_NO ) ENABLE );
+
+ALTER TABLE DEPT2 ADD CONSTRAINT DEPT2_UK1 UNIQUE (DEPT_PHONE) ENABLE;
+
+ALTER TABLE DEPT2 ADD CONSTRAINT DEPT2_FK1 FOREIGN KEY(LOCA) REFERENCES LOCATIONS(LOCATION_ID) ENABLE;
+
+ALTER TABLE DEPT2 ADD CONSTRAINT DEPT2_CHK1 CHECK  (DEPT_BONUS > 0) ENABLE;
+
+
+-------------------------------------------------------------------------------------------------------------------------------------
+--연습문제
+/*문제 1.
+다음과 같은 테이블을 생성하고 데이터를 insert하세요 (커밋)
+조건) M_NAME 는 가변문자형, 널값을 허용하지 않음
+조건) M_NUM 은 숫자형, 이름(mem_memnum_pk) primary key
+조건) REG_DATE 는 날짜형, 널값을 허용하지 않음, 이름:(mem_regdate_uk) UNIQUE키
+조건) GENDER 가변문자형 1개 'M' OR 'F'만 들어갈 수 있게
+조건) LOCA 숫자형, 이름:(mem_loca_loc_locid_fk) foreign key ? 참조 locations테이블(location_id)
+문제 2.
+MEMBERS테이블과 LOCATIONS테이블을 INNER JOIN 하고 m_name, m_mum, street_address, location_id
+컬럼만 조회
+m_num기준으로 오름차순 조회*/
+
+--답
+CREATE TABLE PARK 
+(
+  M_NAME VARCHAR2(20) NOT NULL
+, M_NUM NUMBER(10) CONSTRAINT mem_memnum_pk PRIMARY KEY
+, REG_DATE DATE DEFAULT SYSDATE  CONSTRAINT mem_regdate_uk UNIQUE NOT NULL 
+, GENDER VARCHAR2(20) CHECK (GENDER = 'F' OR GENDER ='M')
+, LOCA NUMBER(4)  CONSTRAINT mem_loca_loc_locid_fk REFERENCES LOCATIONS(LOCATION_ID)
+);
+
+DESC PARK;
+SELECT * FROM PARK;
+
+INSERT INTO PARK VALUES ('AAA', 1, '2018-07-01', 'M', 1800);
+INSERT INTO PARK VALUES ('BBB', 2, '2018-07-02', 'F', 1900);
+INSERT INTO PARK VALUES ('CCC', 3, '2018-07-03', 'M', 2000);
+INSERT INTO PARK VALUES ('DDD', 4, SYSDATE, 'M', 2000);
+
+/*문제 2.
+PARK테이블과 LOCATIONS테이블을 INNER JOIN 하고 m_name, m_Num, street_address, location_id
+컬럼만 조회
+m_num기준으로 오름차순 조회*/
+
+SELECT P.M_NAME, P.M_NUM, L.STREET_ADDRESS, L.LOCATION_ID
+FROM PARK P
+JOIN LOCATIONS L
+ON P.LOCA = L.LOCATION_ID
+ORDER BY P.M_NUM;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

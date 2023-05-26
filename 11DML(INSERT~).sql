@@ -127,7 +127,7 @@ DELETE FROM EMPS WHERE EMPLOYEE_ID = 103;
 DEPTS테이블의 다음을 추가하세요
 SELECT * FROM DEPTS;
 
---답
+--답 O
 INSERT INTO DEPTS(DEPARTMENT_ID, DEPARTMENT_NAME, MANAGER_ID, LOCATION_ID)
 VALUES (320,'영업', 303,1700);
 COMMIT;
@@ -136,14 +136,15 @@ COMMIT;
 DEPTS테이블의 데이터를 수정합니다
 1. department_name 이 IT Support 인 데이터의 department_name을 IT bank로 변경
 
---답
+--답 O
 UPDATE DEPTS 
 SET DEPARTMENT_NAME = 'IT Bank'
-WHERE DEPARTMENT_NAME = 'IT';
+WHERE DEPARTMENT_NAME = 'IT Support';
 
+SELECT * FROM DEPTS;
 2. department_id가 290인 데이터의 manager_id를 301로 변경
 
---답
+--답 O
 UPDATE DEPTS
 SET MANAGER_ID = 301
 WHERE DEPARTMENT_ID = 290;
@@ -151,7 +152,7 @@ WHERE DEPARTMENT_ID = 290;
 
 3. department_name이 IT Helpdesk인 데이터의 부서명을 IT Help로 , 매니저아이디를 303으로, 지역아이디를 1800으로 변경하세요
 
---답
+--답 O
 UPDATE DEPTS
 SET DEPARTMENT_NAME = 'IT Help',
        MANAGER_ID = 303,
@@ -161,7 +162,7 @@ WHERE DEPARTMENT_NAME = 'IT Helpdesk';
 
 4. 재정, 인사, 영업 의 매니저아이디를 301로 한번에 변경하세요.
 
---답
+--답 O
 UPDATE DEPTS
 SET MANAGER_ID = 301
 WHERE DEPARTMENT_ID IN (300,310,320);
@@ -173,7 +174,7 @@ SELECT * FROM DEPTS;
 1. 부서명 영업부를 삭제 하세요
 2. 부서명 NOC를 삭제하세요
 
---답
+--답 O
 DELETE FROM DEPTS WHERE DEPARTMENT_ID IN (320, 220);
 
 SELECT * FROM DEPTS;
@@ -183,15 +184,15 @@ SELECT * FROM DEPTS;
 문제4
 1. Depts 사본테이블에서 department_id 가 200보다 큰 데이터를 삭제하세요.
 
---답
+--답 O 
 DELETE FROM DEPTS WHERE DEPARTMENT_ID > 200;
 
 SELECT * FROM DEPTS;
 
 2. Depts 사본테이블의 manager_id가 null이 아닌 데이터의 manager_id를 전부 100으로 변경하세요.
 
---답
-UPDATE DEPTS
+--답 O
+UPDATE DEPTS 
 SET MANAGER_ID = 100
 WHERE MANAGER_ID IS NOT NULL;
 
@@ -284,23 +285,4 @@ WHEN NOT MATCHED THEN
                             
 SELECT * FROM JOBS_IT;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+desc depts;

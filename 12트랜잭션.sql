@@ -1,0 +1,38 @@
+--트랜잭션  (논리적 작업단위)
+
+SHOW AUTOCOMMIT;
+--오토커민 켜기
+SET AUTOCOMMIT ON;
+--오토커밋 끄기
+SET AUTOCOMMIT OFF;
+
+DELETE FROM DEPTS;
+ROLLBACK;
+SELECT * FROM DEPTS;
+
+DELETE FROM DEPTS WHERE DEPARTMENT_ID = 10;
+
+SAVEPOINT DELETE10; -- 세이브포인트 기록
+
+DELETE FROM DEPTS WHERE DEPARTMENT_ID = 20;
+
+SAVEPOINT DELETE20; --세이브포인트 기록
+
+ROLLBACK TO DELETE10;
+
+ROLLBACK; --마지막 커밋 시점
+
+SELECT * FROM DEPTS;
+
+---------------------------------------------------------------------------------------------
+INSERT INTO DEPTS VALUES(300, 'DEMO', NULL, 1800);
+
+COMMIT; --데이터 반영
+
+SELECT * FROM DEPTS;
+
+
+
+
+
+
