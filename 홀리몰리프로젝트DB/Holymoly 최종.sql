@@ -1,17 +1,3 @@
-테이블 삭제할 때(위에서부터 아래로 그대로 삭제하면 됨)
-
-DROP SEQUENCE TICKLIST_SEQ ;
-DROP SEQUENCE TICK_SEQ;
-DROP SEQUENCE SCHE_SEQ;
-DROP SEQUENCE FILM_SEQ;
-DROP SEQUENCE seat_seq;
-DROP TABLE TICKETLIST;
-DROP TABLE SEAT;
-DROP TABLE HMEMBER;
-DROP TABLE TICKETING;
-DROP TABLE SCHEDULE;
-DROP TABLE THEATER;
-DROP TABLE FILM;
 
 --테이블 삭제할 때(위에서부터 아래로 그대로 삭제하면 됨)
 
@@ -89,11 +75,11 @@ INSERT INTO FILM VALUES
 INSERT INTO FILM VALUES
 ('FILM'||LPAD(FILM_SEQ.NEXTVAL,4,0),'가디언즈 오브 갤럭시','성공하지 못할 경우 그들의 마지막이 될지도 모르는 미션에 나서는 이야기','150분',12500);
 INSERT INTO FILM VALUES
-('FILM'||LPAD(FILM_SEQ.NEXTVAL,4,0),'짱구는 못말려 : 동물소환 닌자 배꼽수비대','세상의 중심인 ‘지구의 배꼽’이 흔들리기 시작하며, 지구가 붕괴될 위기에 처하는데… 과연 짱구는 세상을 지켜낼 수 있을까?!','100분',11000);
+('FILM'||LPAD(FILM_SEQ.NEXTVAL,4,0),'짱구는 못말려  동물소환 닌자 배꼽수비대','세상의 중심인 ‘지구의 배꼽’이 흔들리기 시작하며, 지구가 붕괴될 위기에 처하는데… 과연 짱구는 세상을 지켜낼 수 있을까?!','100분',11000);
 INSERT INTO FILM VALUES
 ('FILM'||LPAD(FILM_SEQ.NEXTVAL,4,0),'스즈메의 문단속','“꿈이 아니었어” 규슈, 시코쿠, 고베, 도쿄 재난을 막기 위해 일본 전역을 돌며 필사적으로 문을 닫아가던 중 어릴 적 고향에 닿은 ‘스즈메’는 잊고 있던 진실과 마주하게 되는데…','122분',11500);
 INSERT INTO FILM VALUES
-('FILM'||LPAD(FILM_SEQ.NEXTVAL,4,0),'분노의 질주: 라이드 오어 다이','달리거나 죽거나, 그들의 마지막 질주가 시작된다!','141분',13000);
+('FILM'||LPAD(FILM_SEQ.NEXTVAL,4,0),'분노의 질주 라이드 오어 다이','달리거나 죽거나, 그들의 마지막 질주가 시작된다!','141분',13000);
 INSERT INTO FILM VALUES
 ('FILM'||LPAD(FILM_SEQ.NEXTVAL,4,0),'범죄도시3','나쁜 놈들 잡는 데 이유 없고 제한 없다. 커진 판도 시원하게 싹 쓸어버린다!','105분',12700);
 INSERT INTO FILM VALUES('FILM'||LPAD(FILM_SEQ.NEXTVAL,4,0),'남은 인생 10년','스무 살이 되던 해, 수 만명 중 1명이 걸리는 난치병으로 10년의 삶을 선고받은 ‘마츠리’는 삶의 의지를 잃은 ‘카즈토’를 만나 사랑에 빠진다.','125분',12400);
@@ -351,5 +337,3 @@ INSERT INTO TICKETLIST VALUES (TICKLIST_SEQ.NEXTVAL, 'TICK0006', 'werty1212','D-
 INSERT INTO TICKETLIST VALUES (TICKLIST_SEQ.NEXTVAL, 'TICK0006', 'werty1212','D-7');
 
 commit;
-
-select * from hmember;
